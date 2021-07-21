@@ -18,7 +18,7 @@
                     <div class="col-sm-6 offset-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Approved Orders</li>
+                            <li class="breadcrumb-item active">Approved Salesaaaa</li>
                         </ol>
                     </div>
                 </div>

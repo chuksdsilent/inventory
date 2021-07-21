@@ -42,37 +42,34 @@ class SupplierController extends Controller
      */
     public function store(Request $request)
     {
-        $inputs = $request->except('_token');
-        $rules = [
-            'name' => 'required | min:3',
-            'email' => 'required| email | unique:suppliers',
-            'phone' => 'required | unique:suppliers',
-            'address' => 'required',
-            'city' => 'required',
-            'photo' => 'required | image',
-            'type' => 'required | integer',
-        ];
 
-        $validation = Validator::make($inputs, $rules);
-        if ($validation->fails())
-        {
-            return redirect()->back()->withErrors($validation)->withInput();
-        }
+        $inputs = $request->except('_token');
+//        $rules = [
+//            'name' => 'required | min:3',
+//            'email' => 'required| email | unique:suppliers',
+//            'phone' => 'required | unique:suppliers',
+//            'address' => 'required',
+//            'city' => 'required',
+//            'photo' => 'required | image',
+//            'type' => 'required | integer',
+//        ];
+//
+//        $validation = Validator::make($inputs, $rules);
+//        if ($validation->fails()) {
+//            return redirect()->back()->withErrors($validation)->withInput();
+//        }
 
         $image = $request->file('photo');
         $slug =  Str::slug($request->input('name'));
-        if (isset($image))
-        {
+        if (isset($image)) {
             $currentDate = Carbon::now()->toDateString();
-            $imageName = $slug.'-'.$currentDate.'-'.uniqid().'.'.$image->getClientOriginalExtension();
-            if (!Storage::disk('public')->exists('supplier'))
-            {
+            $imageName = $slug . '-' . $currentDate . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
+            if (!Storage::disk('public')->exists('supplier')) {
                 Storage::disk('public')->makeDirectory('supplier');
             }
             $postImage = Image::make($image)->resize(480, 320)->stream();
-            Storage::disk('public')->put('supplier/'.$imageName, $postImage);
-        } else
-        {
+            Storage::disk('public')->put('supplier/' . $imageName, $postImage);
+        } else {
             $imageName = 'default.png';
         }
 
@@ -82,13 +79,14 @@ class SupplierController extends Controller
         $supplier->phone = $request->input('phone');
         $supplier->address = $request->input('address');
         $supplier->city = $request->input('city');
-        $supplier->type = $request->input('type');
+        $supplier->type = "$request->input('type')";
         $supplier->shop_name = $request->input('shop_name');
         $supplier->account_holder = $request->input('account_holder');
         $supplier->account_number = $request->input('account_number');
         $supplier->bank_name = $request->input('bank_name');
         $supplier->bank_branch = $request->input('bank_branch');
-        $supplier->photo = $imageName;
+        $supplier->photo = "No Image";
+        $supplier->photo = "$imageName";
         $supplier->save();
 
         Toastr::success('Supplier Successfully Created', 'Success!!!');
@@ -138,32 +136,27 @@ class SupplierController extends Controller
         ];
 
         $validation = Validator::make($inputs, $rules);
-        if ($validation->fails())
-        {
+        if ($validation->fails()) {
             return redirect()->back()->withErrors($validation)->withInput();
         }
 
         $image = $request->file('photo');
         $slug =  Str::slug($request->input('name'));
-        if (isset($image))
-        {
+        if (isset($image)) {
             $currentDate = Carbon::now()->toDateString();
-            $imageName = $slug.'-'.$currentDate.'-'.uniqid().'.'.$image->getClientOriginalExtension();
-            if (!Storage::disk('public')->exists('supplier'))
-            {
+            $imageName = $slug . '-' . $currentDate . '-' . uniqid() . '.' . $image->getClientOriginalExtension();
+            if (!Storage::disk('public')->exists('supplier')) {
                 Storage::disk('public')->makeDirectory('supplier');
             }
 
             // delete old photo
-            if (Storage::disk('public')->exists('supplier/'. $supplier->photo))
-            {
-                Storage::disk('public')->delete('supplier/'. $supplier->photo);
+            if (Storage::disk('public')->exists('supplier/' . $supplier->photo)) {
+                Storage::disk('public')->delete('supplier/' . $supplier->photo);
             }
 
             $postImage = Image::make($image)->resize(480, 320)->stream();
-            Storage::disk('public')->put('supplier/'.$imageName, $postImage);
-        } else
-        {
+            Storage::disk('public')->put('supplier/' . $imageName, $postImage);
+        } else {
             $imageName = $supplier->photo;
         }
 
@@ -194,9 +187,8 @@ class SupplierController extends Controller
     public function destroy(Supplier $supplier)
     {
         // delete old photo
-        if (Storage::disk('public')->exists('supplier/'. $supplier->photo))
-        {
-            Storage::disk('public')->delete('supplier/'. $supplier->photo);
+        if (Storage::disk('public')->exists('supplier/' . $supplier->photo)) {
+            Storage::disk('public')->delete('supplier/' . $supplier->photo);
         }
 
         $supplier->delete();

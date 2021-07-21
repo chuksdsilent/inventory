@@ -54,7 +54,7 @@
                                         <strong>Admin, {{ config('app.name') }}</strong><br>
                                         {{ $company->address }}<br>
                                         {{ $company->city }} - {{ $company->zip_code }}, {{ $company->country }}<br>
-                                        Phone: (+880) {{ $company->mobile }} {{ $company->phone !== null ? ', +880'.$company->phone : ''  }}<br>
+                                        Phone:  {{ $company->mobile }} {{ $company->phone !== null ? ', +880'.$company->phone : ''  }}<br>
                                         Email: {{ $company->email }}
                                     </address>
                                 </div>
@@ -62,19 +62,18 @@
                                 <div class="col-sm-4 invoice-col">
                                     To
                                     <address>
-                                        <strong>{{ $order->customer->name }}</strong><br>
-                                        {{ $order->customer->address }}<br>
-                                        {{ $order->customer->city }}<br>
-                                        Phone: (+880) {{ $order->customer->phone }}<br>
-                                        Email: {{ $order->customer->email }}
+                                        <strong>{{ $order_details->customer->name }}</strong><br>
+                                        {{ $order_details->customer->address }}<br>
+                                        {{ $order_details->customer->city }}<br>
+                                        Phone: {{ $order_details->customer->phone }}<br>
+                                        Email: {{ $order_details->customer->email }}
                                     </address>
                                 </div>
                                 <!-- /.col -->
                                 <div class="col-sm-4 invoice-col">
-                                    <b>Invoice #IMS-{{ $order->created_at->format('Ymd') }}{{ $order->id }}</b><br><br>
-                                    <b>Order ID:</b> {{ str_pad($order->id,9,"0",STR_PAD_LEFT) }}<br>
-                                    <b>Order Status:</b> <span class="badge {{ $order->order_status == 'approved' ? 'badge-success' : 'badge-warning'  }}">{{ $order->order_status }}</span><br>
-                                    <b>Account:</b> {{ $order->customer->account_number }}
+                                    <b>Invoice #IMS-{{ $order_details->created_at->format('Ymd') }}{{ $order_details->id }}</b><br><br>
+                                    <b>Order ID:</b> {{ str_pad($order_details->id,9,"0",STR_PAD_LEFT) }}<br>
+                                    <b>Account:</b> {{ $order_details->customer->account_number }}
                                 </div>
                                 <!-- /.col -->
                             </div>
@@ -95,14 +94,14 @@
                                         </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach($order_details as $order_detail)
+                                            @foreach($orders as $order)
                                                 <tr>
                                                     <td>{{ $loop->iteration }}</td>
-                                                    <td>{{ $order_detail->product->name }}</td>
-                                                    <td>{{ $order_detail->product->code }}</td>
-                                                    <td>{{ $order_detail->quantity }}</td>
-                                                    <td>{{ $unit_cost = number_format($order_detail->unit_cost, 2) }}</td>
-                                                    <td>{{ number_format($unit_cost * $order_detail->quantity, 2) }}</td>
+                                                    <td>{{ \App\Product::where('id', $order->product_id)->value("name") }}</td>
+                                                    <td>{{ \App\Product::where('id', $order->product_id)->value("code") }}</td>
+                                                    <td>{{ $order->quantity }}</td>
+                                                    <td>{{ $order->unit_price}}</td>
+                                                    <td>{{ $order->total }}</td>
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -119,16 +118,16 @@
                                         <table class="table table-bordered">
                                             <tr>
                                                 <th style="width:50%">Payment Method:</th>
-                                                <td class="text-right">{{ $order->payment_status }}</td>
+                                                <td class="text-right">{{  ($order->payment_status == "cash") ? "Cash" : "Bank Transfer" }}</td>
                                             </tr>
                                             <tr>
-                                                <th>Pay</th>
-                                                <td class="text-right">{{ number_format($order->pay, 2) }}</td>
+                                                <th>Amount Paid</th>
+                                                <td class="text-right">{{ number_format($order_details->amount_paid, 2) }}</td>
                                             </tr>
-                                            <tr>
-                                                <th>Due</th>
-                                                <td class="text-right">{{ number_format($order->due, 2) }}</td>
-                                            </tr>
+{{--                                            <tr>--}}
+{{--                                                <th>Due</th>--}}
+{{--                                                <td class="text-right">{{ number_format($order->due, 2) }}</td>--}}
+{{--                                            </tr>--}}
                                         </table>
                                     </div>
                                 </div>
@@ -137,16 +136,8 @@
                                     <div class="table-responsive">
                                         <table class="table">
                                             <tr>
-                                                <th style="width:50%">Subtotal:</th>
-                                                <td class="text-right">{{ number_format($order->sub_total, 2) }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Tax (21%)</th>
-                                                <td class="text-right">{{ number_format($order->vat, 2) }}</td>
-                                            </tr>
-                                            <tr>
-                                                <th>Total:</th>
-                                                <td class="text-right">{{ round($order->total) }} Taka</td>
+                                                <th>Total:
+                                                <td class="text-center">N{{ round(\App\Order::where("order_details_id", $id)->sum("total")) }}</td>
                                             </tr>
                                         </table>
                                     </div>
@@ -158,22 +149,22 @@
                             <!-- this row will not appear when printing -->
                             <div class="row no-print">
                                 <div class="col-12">
-                                    @if($order->order_status === 'approved')
-                                        <a href="{{ route('admin.invoice.order_print', $order->id) }}" target="_blank" class="btn btn-default">
-                                            <i class="fa fa-print"></i> Print
-                                        </a>
-                                    @endif
-                                    @if($order->order_status === 'pending')
-                                        <a href="{{ route('admin.order.confirm', $order->id) }}" class="btn btn-success float-right">
-                                            <i class="fa fa-credit-card"></i>
-                                            Approved Payment
-                                        </a>
-                                    @endif
-                                    @if($order->order_status === 'approved')
-                                        <a href="{{ route('admin.order.download', $order->id) }}" target="_blank" class="btn btn-primary float-right" style="margin-right: 5px;">
-                                            <i class="fa fa-download"></i> Generate PDF
-                                        </a>
-                                    @endif
+{{--                                    @if($order->order_status === 'approved')--}}
+{{--                                        <a href="{{ route('admin.invoice.order_print', $order->id) }}" target="_blank" class="btn btn-default">--}}
+{{--                                            <i class="fa fa-print"></i> Print--}}
+{{--                                        </a>--}}
+{{--                                    @endif--}}
+{{--                                    @if($order->order_status === 'pending')--}}
+{{--                                        <a href="{{ route('admin.order.confirm', $order->id) }}" class="btn btn-success float-right">--}}
+{{--                                            <i class="fa fa-credit-card"></i>--}}
+{{--                                            Approved Payment--}}
+{{--                                        </a>--}}
+{{--                                    @endif--}}
+{{--                                    @if($order->order_status === 'approved')--}}
+{{--                                        <a href="{{ route('admin.order.download', $order->id) }}" target="_blank" class="btn btn-primary float-right" style="margin-right: 5px;">--}}
+{{--                                            <i class="fa fa-download"></i> Generate PDF--}}
+{{--                                        </a>--}}
+{{--                                    @endif--}}
                                 </div>
                             </div>
                         </div>

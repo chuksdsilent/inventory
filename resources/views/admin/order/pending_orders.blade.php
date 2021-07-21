@@ -18,7 +18,7 @@
                     <div class="col-sm-6 offset-6">
                         <ol class="breadcrumb float-sm-right">
                             <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Dashboard</a></li>
-                            <li class="breadcrumb-item active">Pending Oprders</li>
+                            <li class="breadcrumb-item active">Sales</li>
                         </ol>
                     </div>
                 </div>
@@ -34,7 +34,7 @@
                         <!-- general form elements -->
                         <div class="card">
                             <div class="card-header">
-                                <h3 class="card-title">PENDING ORDERS LISTS</h3>
+                                <h3 class="card-title">SALES LISTS</h3>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
@@ -42,41 +42,34 @@
                                     <thead>
                                     <tr>
                                         <th>Serial</th>
-                                        <th>Name</th>
+                                        
                                         <th>Date</th>
+                                        <th>Unit Price</th>
                                         <th>Quantity</th>
                                         <th>Total</th>
                                         <th>Payment Status</th>
-                                        <th>Order Status</th>
+{{--                                        <th>Order Status</th>--}}
                                         <th>Actions</th>
                                     </tr>
                                     </thead>
-                                    <tfoot>
-                                    <tr>
-                                        <th>Serial</th>
-                                        <th>Name</th>
-                                        <th>Date</th>
-                                        <th>Quantity</th>
-                                        <th>Total</th>
-                                        <th>Payment Status</th>
-                                        <th>Order Status</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                    </tfoot>
                                     <tbody>
                                     @foreach($pendings as $key => $order)
                                         <tr>
                                             <td>{{ $key + 1 }}</td>
-                                            <td>{{ $order->customer->name }}</td>
+                                            <!-- <td>{{ \App\Customer::where('id', $order->customer_id)->value('name') }}</td> -->
                                             <td>{{ $order->created_at->toFormattedDateString() }}</td>
-                                            <td>{{ $order->total_products }}</td>
+                                            <td>{{  $order->unit_price }}</td>
+                                            <td>{{ $order->quantity }}</td>
                                             <td>{{ $order->total }}</td>
-                                            <td>{{ $order->payment_status }}</td>
-                                            <td><span class="badge badge-warning">{{ $order->order_status }}</span></td>
+                                            <td>{{ ($order->payment_status == "cash") ? "Cash" : "Bank Transfer"  }}</td>
+{{--                                            <td><span class="badge badge-warning">{{ $order->order_status }}</span></td>--}}
 
                                             <td>
-                                                <a href="{{ route('admin.order.show', $order->id) }}" class="btn btn-success">
+                                                <a href="{{ route('admin.order.show', $order->order_details_id) }}" class="btn btn-success">
                                                     <i class="fa fa-eye" aria-hidden="true"></i>
+                                                </a>
+                                                <a href="{{ route('admin.sales.edit', $order->order_details_id) }}" class="btn btn-success">
+                                                    <i class="fa fa-edit" aria-hidden="true"></i>
                                                 </a>
                                                 <button class="btn btn-danger" type="button" onclick="deleteItem({{ $order->id }})">
                                                     <i class="fa fa-trash" aria-hidden="true"></i>
@@ -89,6 +82,12 @@
                                             </td>
                                         </tr>
                                     @endforeach
+                                    <tr>
+                                        <td colspan="4" style="text-align: left;">Total</td>
+                                        <td colspan="4" style="text-align: left;">
+                                            {{ \App\Order::sum("total") }}
+                                        </td>
+                                    </tr>
                                     </tbody>
 
                                 </table>

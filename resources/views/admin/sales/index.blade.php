@@ -37,9 +37,7 @@
                                 <h3 class="card-title">
                                     TOTAL SALES REPORT
                                     <small class="text-danger pull-right">
-                                        <span class="badge badge-info">Total Sales : {{ $balance->sum('total') }} Taka</span>
-                                        <span class="badge badge-success">Paid : {{ $balance->sum('pay') }} Taka</span>
-                                        <span class="badge badge-warning">Due : {{ $balance->sum('due') }} Taka</span>
+                                        <span class="badge badge-info">Total Sales : {{ $balance->sum('total') }} Naira</span>
                                     </small>
                                 </h3>
                             </div>
@@ -50,48 +48,38 @@
                                     <tr>
                                         <th>Serial</th>
                                         <th>Product Title</th>
-                                        <th>Image</th>
-                                        <th>Customer Name</th>
+{{--                                        <th>Image</th>--}}
+{{--                                        <th>Customer Name</th>--}}
                                         <th>Quantity</th>
+                                        <th>Unit Price</th>
                                         <th>Total</th>
-                                        <th>Time</th>
-                                        <th>Delete</th>
+                                        <!--<th>Time</th>-->
+{{--                                        <th>Delete</th>--}}
                                     </tr>
                                     </thead>
-                                    <tfoot>
-                                    <tr>
-                                        <th>Serial</th>
-                                        <th>Product Title</th>
-                                        <th>Image</th>
-                                        <th>Customer Name</th>
-                                        <th>Quantity</th>
-                                        <th>Total</th>
-                                        <th>Time</th>
-                                        <th>Delete</th>
-                                    </tr>
-                                    </tfoot>
                                     <tbody>
                                     @foreach($orders as $order)
                                         <tr>
                                             <td>{{ $loop->iteration }}</td>
                                             <td>{{ $order->product_name }}</td>
-                                            <td>
-                                                <img class="img-rounded" width="40" height="30" src="{{ URL::asset('storage/product/'. $order->image) }}" alt="{{ $order->product_name }}">
-                                            </td>
-                                            <td>{{ $order->customer_name }}</td>
+{{--                                            <td>--}}
+{{--                                                <img class="img-rounded" width="40" height="30" src="{{ URL::asset('storage/product/'. $order->image) }}" alt="{{ $order->product_name }}">--}}
+{{--                                            </td>--}}
+{{--                                            <td>{{ $order->customer_name }}</td>--}}
                                             <td>{{ $order->quantity }}</td>
+                                            <td>{{ $order->unit_price }}</td>
                                             <td>{{ number_format($order->total, 2) }}</td>
-                                            <td>{{ date('d-M-Y h:i:s A', strtotime($order->created_at)) }}</td>
-                                            <td>
-                                                <button class="btn btn-sm btn-danger" type="button" onclick="deleteItem({{ $order->id }})">
-                                                    <i class="fa fa-trash" aria-hidden="true"></i>
-                                                </button>
-                                                <form id="delete-form-{{ $order->id }}" action="{{ route('admin.expense.destroy', $order->id) }}" method="post"
-                                                      style="display:none;">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                </form>
-                                            </td>
+                                            <!--<td>{{ date('d-M-Y h:i:s A', strtotime($order->created_at)) }}</td>-->
+{{--                                            <td>--}}
+{{--                                                <button class="btn btn-sm btn-danger" type="button" onclick="deleteItem({{ $order->id }})">--}}
+{{--                                                    <i class="fa fa-trash" aria-hidden="true"></i>--}}
+{{--                                                </button>--}}
+{{--                                                <form id="delete-form-{{ $order->id }}" action="{{ route('admin.expense.destroy', $order->id) }}" method="post"--}}
+{{--                                                      style="display:none;">--}}
+{{--                                                    @csrf--}}
+{{--                                                    @method('DELETE')--}}
+{{--                                                </form>--}}
+{{--                                            </td>--}}
                                         </tr>
                                     @endforeach
                                     </tbody>

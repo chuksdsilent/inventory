@@ -43,12 +43,10 @@
                                     <tr>
                                         <th>Serial</th>
                                         <th>Name</th>
-                                        <th>Image</th>
                                         <th>Email</th>
                                         <th>Phone</th>
                                         <th>Address</th>
                                         <th>City</th>
-                                        <th>Type</th>
                                         <th>Shop Name</th>
                                         <th>Account Holder</th>
                                         <th>Account Number</th>
@@ -57,24 +55,21 @@
                                         <th>Actions</th>
                                     </tr>
                                     </thead>
-                                    <tfoot>
-                                    <tr>
-                                        <th>Serial</th>
-                                        <th>Name</th>
-                                        <th>Image</th>
-                                        <th>Email</th>
-                                        <th>Phone</th>
-                                        <th>Address</th>
-                                        <th>City</th>
-                                        <th>Type</th>
-                                        <th>Shop Name</th>
-                                        <th>Account Holder</th>
-                                        <th>Account Number</th>
-                                        <th>Bank Name</th>
-                                        <th>Bank Branch</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                    </tfoot>
+{{--                                    <tfoot>--}}
+{{--                                    <tr>--}}
+{{--                                        <th>Serial</th>--}}
+{{--                                        <th>Name</th>--}}
+{{--                                        <th>Email</th>--}}
+{{--                                        <th>Phone</th>--}}
+{{--                                        <th>Address</th>--}}
+{{--                                        <th>Shop Name</th>--}}
+{{--                                        <th>Account Holder</th>--}}
+{{--                                        <th>Account Number</th>--}}
+{{--                                        <th>Bank Name</th>--}}
+{{--                                        <th>Bank Branch</th>--}}
+{{--                                        <th>Actions</th>--}}
+{{--                                    </tr>--}}
+{{--                                    </tfoot>--}}
                                     <tbody>
                                     @foreach($suppliers as $key => $supplier)
                                         <tr>
@@ -86,7 +81,6 @@
                                             <td>{{ $supplier->email }}</td>
                                             <td>0{{ $supplier->phone }}</td>
                                             <td>{{ $supplier->address }}</td>
-                                            <td>{{ $supplier->city }}</td>
                                             <td>
                                                 @if($supplier->type == 1)
                                                     {{ 'Distributor' }}

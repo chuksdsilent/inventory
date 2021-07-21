@@ -40,16 +40,16 @@ class ExpenseController extends Controller
     public function store(Request $request)
     {
         $inputs = $request->except('_token');
-        $rules = [
-          'name' => 'required | min:3',
-          'amount' => 'required'
-        ];
-
-        $validator = Validator::make($inputs, $rules);
-        if ($validator->fails())
-        {
-            return redirect()->back()->withErrors($validator)->withInput();
-        }
+//        $rules = [
+//          'name' => 'required | min:3',
+//          'amount' => 'required'
+//        ];
+//
+//        $validator = Validator::make($inputs, $rules);
+//        if ($validator->fails())
+//        {
+//            return redirect()->back()->withErrors($validator)->withInput();
+//        }
 
         $date = Carbon::now();
 
@@ -133,8 +133,8 @@ class ExpenseController extends Controller
 
     public function today_expense()
     {
-        $today = date('Y-m-d');
-        $expenses = Expense::latest()->where('date', $today)->get();
+        $today = Carbon::today();
+        $expenses = Expense::latest()->where('date', '=', $today)->get();
         return view('admin.expense.today', compact('expenses'));
     }
 

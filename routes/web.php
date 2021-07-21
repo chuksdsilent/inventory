@@ -17,13 +17,13 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Auth::routes();
+Auth::routes(['register' => true]);
 
 Route::get('/home', 'HomeController@index')->name('home');
-
+Route::patch('products/{id}', "ProductController@updateProduct");
 
 // Admin Group
-Route::group(['as'=>'admin.', 'prefix' => 'admin', 'middleware' => 'auth' ], function(){
+Route::group(['as' => 'admin.', 'prefix' => 'admin', 'middleware' => 'auth'], function () {
 
     Route::get('/dashboard', 'DashboardController@index')->name('dashboard');
     Route::resource('employee', 'EmployeeController');
@@ -45,8 +45,18 @@ Route::group(['as'=>'admin.', 'prefix' => 'admin', 'middleware' => 'auth' ], fun
 
     Route::resource('pos', 'PosController');
 
-    Route::get('order/show/{id}', 'OrderController@show')->name('order.show');
-    Route::get('order/pending', 'OrderController@pending_order')->name('order.pending');
+    Route::get('sales/create', 'OrderController@create_order')->name('sales.create');
+    Route::get('order/complete-payment/{i}', 'OrderController@complete_payment')->name('order.complete_payment');
+    Route::post('order/complete-payment', 'OrderController@completePayment')->name('order.store');
+
+    Route::get('sales/store', 'OrderController@store')->name('order.store');
+    Route::post('sales/store-sales', 'OrderController@storeSales')->name('order.store');
+    Route::post('sales/update', 'OrderController@update_sales')->name('order.update');
+    Route::get('sales/show/{id}', 'OrderController@show')->name('order.show');
+    Route::get('sales/pending', 'OrderController@pending_order')->name('sales.pending');
+    Route::get('sales/edit/{i}', 'OrderController@edit_sales')->name('sales.edit');
+    Route::get('order/installment', 'OrderController@installment')->name('order.installment');
+    Route::get('order/full-payment', 'OrderController@full_payment')->name('order.full_payment');
     Route::get('order/approved', 'OrderController@approved_order')->name('order.approved');
     Route::get('order/confirm/{id}', 'OrderController@order_confirm')->name('order.confirm');
     Route::delete('order/delete/{id}', 'OrderController@destroy')->name('order.destroy');
@@ -54,7 +64,7 @@ Route::group(['as'=>'admin.', 'prefix' => 'admin', 'middleware' => 'auth' ], fun
 
     Route::get('sales-today', 'OrderController@today_sales')->name('sales.today');
     Route::get('sales-monthly/{month?}', 'OrderController@monthly_sales')->name('sales.monthly');
-    Route::get('sales-total','OrderController@total_sales')->name('sales.total');
+    Route::get('sales-total', 'OrderController@total_sales')->name('sales.total');
 
     Route::resource('cart', 'CartController');
 
@@ -62,5 +72,4 @@ Route::group(['as'=>'admin.', 'prefix' => 'admin', 'middleware' => 'auth' ], fun
     Route::get('print/{customer_id}', 'InvoiceController@print')->name('invoice.print');
     Route::get('order-print/{order_id}', 'InvoiceController@order_print')->name('invoice.order_print');
     Route::post('invoice-final', 'InvoiceController@final_invoice')->name('invoice.final_invoice');
-
 });

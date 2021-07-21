@@ -6,14 +6,20 @@ use Illuminate\Database\Eloquent\Model;
 
 class OrderDetail extends Model
 {
+    protected $guarded = [];
+
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
     public function product()
     {
         return $this->belongsTo(Product::class);
     }
 
-    public function order()
+    public function orders()
     {
-        return $this->belongsTo(Order::class);
+        return $this->hasMany(Order::class);
     }
 
 }

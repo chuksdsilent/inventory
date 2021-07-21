@@ -43,20 +43,20 @@ class CustomerController extends Controller
     public function store(Request $request)
     {
         $inputs = $request->except('_token');
-        $rules = [
-            'name' => 'required | min:3',
-            'email' => 'required| email | unique:customers',
-            'phone' => 'required | unique:customers',
-            'address' => 'required',
-            'city' => 'required',
-            'photo' => 'required | image',
-        ];
-
-        $validation = Validator::make($inputs, $rules);
-        if ($validation->fails())
-        {
-            return redirect()->back()->withErrors($validation)->withInput();
-        }
+//        $rules = [
+//            'name' => 'required | min:3',
+//            'email' => 'required| email | unique:customers',
+//            'phone' => 'required | unique:customers',
+//            'address' => 'required',
+//            'city' => 'required',
+//            'photo' => 'required | image',
+//        ];
+//
+//        $validation = Validator::make($inputs, $rules);
+//        if ($validation->fails())
+//        {
+//            return redirect()->back()->withErrors($validation)->withInput();
+//        }
 
         $image = $request->file('photo');
         $slug =  Str::slug($request->input('name'));
